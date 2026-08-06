@@ -59,14 +59,27 @@ why asking again => already_covered.
 why should I tell you => privacy_pushback.
 Prefer ambiguous over guessing yes/no.`;
 
-const client = new OpenAI({
+// const client = new OpenAI({
+//   apiKey: env.OPENROUTER_API_KEY,
+//   baseURL: "https://openrouter.ai/api/v1",
+//   defaultHeaders: {
+//     "HTTP-Referer": "http://localhost:3000",
+//     "X-Title": "Americas Health Voice Demo",
+//   },
+// });
+
+const client = new (OpenAI as any)({
   apiKey: env.OPENROUTER_API_KEY,
   baseURL: "https://openrouter.ai/api/v1",
   defaultHeaders: {
-    "HTTP-Referer": "http://localhost:3000",
+    // 1. Try Vercel's dynamic URL. 2. Fall back to your specific Vercel app domain.
+    "HTTP-Referer": process.env.VERCEL_URL 
+      ? `https://${process.env.VERCEL_URL}` 
+      : "https://bot-demos-git-main-rao-mohammad-junaid-shahzads-projects.vercel.app/",
     "X-Title": "Americas Health Voice Demo",
   },
 });
+
 
 export function tryLocalIntent(text: string, step: GateStep): ClassifyResult | null {
   const t = text.trim().toLowerCase().replace(/[^\w\s'-]/g, " ").replace(/\s+/g, " ");
